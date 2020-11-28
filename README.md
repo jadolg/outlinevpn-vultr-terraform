@@ -2,7 +2,7 @@
 
 Provision an [outline](https://getoutline.org/) server on [Vultr](https://www.vultr.com/)
 
-It will use the cheapest plan. You need to set `VULTR_API_KEY` in your environment before trying to apply. Edit `vars.tf` to setup the correct region for you.
+It will use the cheapest plan. You need to set `VULTR_API_KEY` (https://my.vultr.com/settings/#settingsapi) in your environment before trying to apply. Edit `vars.tf` to setup the correct region for you.
 
 After provisioning, the API URL will be part of the output.
 
