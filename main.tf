@@ -2,6 +2,7 @@
 provider "vultr" {
   rate_limit = 700
   retry_limit = 3
+  version = "1.5.0"
 }
 
 # Create outline server
