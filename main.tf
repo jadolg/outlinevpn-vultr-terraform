@@ -1,25 +1,35 @@
 # Configure the Vultr Provider
-provider "vultr" {
-  rate_limit = 700
-  retry_limit = 3
-  version = "1.5.0"
+terraform {
+  required_providers {
+    vultr = {
+      source = "vultr/vultr"
+      version = "2.1.1"
+    }
+  }
+}
+
+data "vultr_plan" "cheap_plan" {
+  filter {
+    name   = "monthly_cost"
+    values = ["5"]
+  }
 }
 
 # Create outline server
-resource "vultr_server" "outline" {
+resource "vultr_instance" "outline" {
   # cheapest plan $5/month
-  plan_id = "201"
-  region_id = "${var.region_id}"
+  plan = data.vultr_plan.cheap_plan.id
+  region = var.region_code
   # ubuntu 20.10
   os_id = "413"
-  label = "${var.server_name}"
-  tag = "${var.server_name}"
-  hostname = "${var.server_name}"
+  label = var.server_name
+  tag = var.server_name
+  hostname = var.server_name
   enable_ipv6 = true
-  auto_backup = false
+  backups = false
+  activation_email = true
   ddos_protection = false
-  notify_activate = true
-  script_id = "${vultr_startup_script.install_outline_server.id}"
+  script_id = vultr_startup_script.install_outline_server.id
 
   provisioner "remote-exec" {
     inline = [
@@ -30,10 +40,10 @@ resource "vultr_server" "outline" {
     ]
 
     connection {
-      host = "${vultr_server.outline.main_ip}"
+      host = vultr_instance.outline.main_ip
       type = "ssh"
       user = "root"
-      password = "${vultr_server.outline.default_password}"
+      password = vultr_instance.outline.default_password
       timeout = "10m"
       agent = "false"
     }
@@ -43,6 +53,6 @@ resource "vultr_server" "outline" {
 # Add the install script
 resource "vultr_startup_script" "install_outline_server" {
   name = "install_outline_server"
-  script = "${file("./install_outline_server.sh")}"
+  script = base64encode(file("./install_outline_server.sh"))
 }
 
