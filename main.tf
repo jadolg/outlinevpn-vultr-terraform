@@ -3,7 +3,7 @@ terraform {
   required_providers {
     vultr = {
       source = "vultr/vultr"
-      version = "2.1.1"
+      version = "2.3.3"
     }
   }
 }
@@ -26,7 +26,7 @@ resource "vultr_instance" "outline" {
   tag = var.server_name
   hostname = var.server_name
   enable_ipv6 = true
-  backups = false
+  backups = "disabled"
   activation_email = true
   ddos_protection = false
   script_id = vultr_startup_script.install_outline_server.id
@@ -55,4 +55,3 @@ resource "vultr_startup_script" "install_outline_server" {
   name = "install_outline_server"
   script = base64encode(file("./install_outline_server.sh"))
 }
-
